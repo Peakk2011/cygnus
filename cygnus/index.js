@@ -9,4 +9,10 @@ import { rebuild } from './lib/inject.js';
 const [,, dir = '.', port = '3000'] = process.argv;
 serve(dir, parseInt(port));
 
-export { serve, processHtml, extractCalls, strip, rebuild };
+export {
+    serve,
+    processHtml,
+    extractCalls,
+    strip,
+    rebuild
+};

@@ -2,12 +2,21 @@
 
 const UNSAFE_TAGS = ['script', 'iframe', 'object', 'embed', 'base'];
 
+/**
+ * Strips script tags, inline event handlers, and javascript: URIs from an HTML string.
+ * @param {string} html
+ * @returns {string}
+ */
 const sanitize = html => html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
     .replace(/ on\w+=\s*["'][^"']*["']/gi, '')
     .replace(/ href=\s*["']javascript:[^"']*["']/gi, ' href="#"')
     .replace(/ src=\s*["']javascript:[^"']*["']/gi, ' src="#"');
 
+/**
+ * Recursively removes all event handler attributes from a DOM node and its children.
+ * @param {Node} node
+ */
 const stripEvents = node => {
     if (node.nodeType !== Node.ELEMENT_NODE) return;
 
@@ -18,6 +27,11 @@ const stripEvents = node => {
     [...node.children].forEach(stripEvents);
 };
 
+/**
+ * Returns true if a node is safe to inject — no unsafe tags, event handlers, or dangerous URIs.
+ * @param {Node} node
+ * @returns {boolean}
+ */
 const isSafe = node => {
     if (node.nodeType === Node.TEXT_NODE) return true;
     if (node.nodeType !== Node.ELEMENT_NODE) return false;
@@ -35,6 +49,12 @@ const isSafe = node => {
     });
 };
 
+/**
+ * Inserts a fragment into a target element using the given mode.
+ * @param {Element} target
+ * @param {DocumentFragment} frag
+ * @param {'replace'|'append'|'prepend'} mode
+ */
 const insert = (target, frag, mode = 'replace') => {
     if (mode === 'append') return target.appendChild(frag);
     if (mode === 'prepend') return target.insertBefore(frag, target.firstChild);
@@ -46,6 +66,13 @@ const insert = (target, frag, mode = 'replace') => {
     target.appendChild(frag);
 };
 
+/**
+ * Fetches an HTML file, sanitizes it, and injects it into a target element.
+ * @param {string} sel - CSS selector for the target element.
+ * @param {string} path - URL of the HTML file to fetch.
+ * @param {{ mode?: 'replace'|'append'|'prepend', onError?: (err: Error) => void }} [opts={}]
+ * @returns {Promise<Element>}
+ */
 const using = async (sel, path, opts = {}) => {
     const { mode = 'replace', onError = console.error } = opts;
 

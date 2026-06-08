@@ -21,6 +21,11 @@ const MIMES = {
     '.ico':  'image/x-icon',
 };
 
+/**
+ * Reads an HTML file, extracts using() calls, and rebuilds it with an inlined script.
+ * @param {string} filePath
+ * @returns {string}
+ */
 const processHtml = (filePath) => {
     const raw = fs.readFileSync(filePath, 'utf-8');
     const calls = extractCalls(raw);
@@ -28,6 +33,11 @@ const processHtml = (filePath) => {
     return rebuild(content, lang, calls, { getHtmlSrc });
 };
 
+/**
+ * Starts the dev server, processing .html files on request and serving other assets as-is.
+ * @param {string} [dir='.'] - Root directory to serve files from.
+ * @param {number} [port=3000]
+ */
 const serve = (dir = '.', port = 3000) => {
     const server = createServer((req, res) => {
         const url = req.url.split('?')[0];

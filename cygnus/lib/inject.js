@@ -1,6 +1,11 @@
 // @fileoverview rebuild complete HTML — inject DOCTYPE, <html>, and using() script
 
-// build inline script — รับ getHTML source มา inline เลย ไม่ต้อง import
+/**
+ * Builds an inline <script type="module"> that calls using() for each selector/src pair.
+ * @param {Array<{sel: string, src: string}>} calls
+ * @param {string} [getHtmlSrc=''] - Source of getHTML module to inline.
+ * @returns {string} Script tag string, or empty string if calls is empty.
+ */
 const buildScript = (calls, getHtmlSrc = '') => {
     if (!calls.length) return '';
 
@@ -16,7 +21,12 @@ ${lines}
   </script>`;
 };
 
-// inject script ก่อนปิด </head>
+/**
+ * Injects a script tag before </head>; falls back to after <body> if </head> is absent.
+ * @param {string} html
+ * @param {string} script
+ * @returns {string}
+ */
 const injectScript = (html, script) => {
     if (!script) return html;
 
@@ -27,12 +37,24 @@ const injectScript = (html, script) => {
     return html.replace('<body>', `<body>\n${script}`);
 };
 
-// rebuild HTML เต็มๆ พร้อม DOCTYPE และ <html>
+/**
+ * Rebuilds a complete HTML document with DOCTYPE, <html>, and injected using() script.
+ * @param {string} content
+ * @param {string} lang - Value for the lang attribute on <html> (e.g. `lang="en"`).
+ * @param {Array<{sel: string, src: string}>} calls
+ * @param {{ getHtmlSrc?: string }} [opts={}]
+ * @returns {string}
+ */
 const rebuild = (content, lang, calls, opts = {}) => {
     const script = buildScript(calls, opts.getHtmlSrc);
     const injected = injectScript(content, script);
 
-    return `<!DOCTYPE html>\n<html ${lang}>\n${injected}\n</html>`;
+    return [
+        '<!DOCTYPE html>',
+        `<html ${lang}>`,
+        injected,
+        '</html>',
+    ].join('\n');
 };
 
 export { rebuild };

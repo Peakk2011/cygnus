@@ -6,7 +6,11 @@ const DOCTYPE_RE = /<!DOCTYPE\s+html>\s*/i;
 const HTML_OPEN_RE = /<html([^>]*)>\s*/i;
 const HTML_CLOSE_RE = /\s*<\/html>/i;
 
-// extract using() calls ที่อยู่ก่อน <html
+/**
+ * Extracts using() calls that appear before the <html> tag.
+ * @param {string} raw
+ * @returns {Array<{sel: string, src: string}>}
+ */
 const extractCalls = (raw) => {
     const beforeHtml = raw.split(/<html/i)[0];
     const calls = [];
@@ -19,16 +23,18 @@ const extractCalls = (raw) => {
     return calls;
 };
 
-// strip using() calls, <!DOCTYPE html>, <html>, </html>
-// ส่งคืนแค่ content ข้างใน
+/**
+ * Strips using() calls, DOCTYPE, and html open/close tags.
+ * @param {string} raw
+ * @returns {{ content: string, lang: string }}
+ */
 const strip = (raw) => {
-    // เอาทุกอย่างก่อน <html ออก (using() calls อยู่ตรงนี้)
+    // remove everything before <html (where using() calls live)
     let out = raw.replace(/^[\s\S]*?(?=<html)/i, '');
 
-    // เอา <!DOCTYPE html> ออก ถ้ามี
     out = out.replace(DOCTYPE_RE, '');
 
-    // เก็บ lang attribute แล้วเอา <html ...> ออก
+    // capture lang attribute then remove <html ...>
     const langMatch = out.match(HTML_OPEN_RE);
     const lang = langMatch?.[1]?.trim() || 'lang="en"';
 
