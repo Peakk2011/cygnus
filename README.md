@@ -48,8 +48,9 @@ name('My App', './favicon.ico');
 </html>
 ```
 
-`name('My App');` = `<title>My App</title>`<br>
-Generates `<meta charset>`, viewport, `<title>`, and `<link rel="icon">` automatically. The favicon argument is optional. If you write your own `<head>`, Cygnus won't override it.
+`name('My App');` = `<title>My App</title>`<br><br>
+Generates `<meta charset>`, viewport, `<title>`, and `<link rel="icon">` automatically. The favicon argument is optional.
+<br>If you write your own `<head>`, Cygnus won't override it.
 
 ### `*name.create()`
 
