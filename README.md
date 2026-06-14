@@ -11,6 +11,14 @@ Note: Cygnus going no framework, no virtual DOM and no overhead
 <br>
 Write `using()` at the top of your HTML. Cygnus handles the rest.
 
+## Key Features
+
+- Native HTML components (no new file extension)
+- Zero runtime overhead
+- Seamless Vite integration
+- Built-in error overlay
+- Simple component system with variables
+
 ## Usage (Example)
 
 It's not a real working example code, but if you want it to run, create a folder called `components` followed by a name like `nav`, `footer`, and then the `.html` extension.
