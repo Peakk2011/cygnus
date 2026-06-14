@@ -1,7 +1,7 @@
-name('Cygnus Test');
-using('#text', './content.html'); 
-using('#dialog', *variable);
-using(CSS, 'dialog.css');
+@name('Cygnus Test');
+@using '#text' from './content.html';
+@using '#dialog' from *variable;
+@using CSS 'dialog.css'; 
 
 *variable.create(
     <div id="model" class="model">
