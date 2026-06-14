@@ -5,6 +5,7 @@ import path from 'path';
 import { extractCalls, extractCssLinks, extractName, strip } from './cygnus/lib/parse.js';
 import { extractVars, stripVars } from './cygnus/lib/vars.js';
 import { rebuild } from './cygnus/lib/inject.js';
+import { buildErrorOverlay } from './cygnus/lib/error-overlay.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -14,35 +15,35 @@ const getHtmlSrc = readFileSync(
     'utf-8'
 );
 
+const HAS_DECL_RE = /\*[\p{L}_][\p{L}\p{N}_]*(\.create\(|\s*=\s*)/u;
+
 const cygnusPlugin = () => ({
     name: 'vite-plugin-cygnus',
 
     transformIndexHtml(html) {
-        const hasVarDecl = /\*[A-Za-z_][A-Za-z0-9_]*\.create\(/.test(html);
-        const calls = extractCalls(html);
-        const cssLinks = extractCssLinks(html);
-        const name = extractName(html);
+        try {
+            const hasVarDecl = HAS_DECL_RE.test(html);
+            const calls = extractCalls(html);
+            const cssLinks = extractCssLinks(html);
+            const name = extractName(html);
 
-        if (!calls.length && !name && !hasVarDecl && !cssLinks.length) {
-            return html;
-        }
+            if (!calls.length && !name && !hasVarDecl && !cssLinks.length) {
+                return html;
+            }
 
-        const { vars, ranges } = extractVars(html);
-        const rawClean = stripVars(html, ranges);
+            const { vars, ranges } = extractVars(html);
+            const rawClean = stripVars(html, ranges);
+            const { content, lang } = strip(rawClean);
 
-        const { content, lang } = strip(rawClean);
-
-        return rebuild(
-            content,
-            lang,
-            calls,
-            {
+            return rebuild(content, lang, calls, {
                 getHtmlSrc,
                 name,
                 vars,
                 cssLinks
-            }
-        );
+            });
+        } catch (err) {
+            return buildErrorOverlay(err);
+        }
     }
 });
 

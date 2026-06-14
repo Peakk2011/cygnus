@@ -1,19 +1,19 @@
 {
   "name": "cygnus",
   "version": "1.0.0",
-  "description": "",
+  "description": "A tool that can make a native '.html' module components.",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
-  "keywords": [],
+  "keywords": ["html", "preprocessor", "components", "vite-plugin"],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "module",
   "devDependencies": {
     "cygnus": "file:cygnus",
-    "vite": "^8.0.16"
+    "vite": "^6.3.5"
   }
 }

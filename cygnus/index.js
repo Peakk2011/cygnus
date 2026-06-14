@@ -2,8 +2,10 @@
 // @fileoverview cygnus entry point
 
 import { serve, processHtml } from './lib/serve.js';
-import { extractCalls, strip } from './lib/parse.js';
+import { extractCalls, extractCssLinks, extractName, strip } from './lib/parse.js';
+import { extractVars, stripVars, interpolatePrimitives } from './lib/vars.js';
 import { rebuild } from './lib/inject.js';
+import { buildErrorOverlay } from './lib/error-overlay.js';
 
 // CLI
 const [,, dir = '.', port = '3000'] = process.argv;
@@ -13,6 +15,12 @@ export {
     serve,
     processHtml,
     extractCalls,
+    extractCssLinks,
+    extractName,
     strip,
-    rebuild
+    extractVars,
+    stripVars,
+    interpolatePrimitives,
+    rebuild,
+    buildErrorOverlay
 };

@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { extractCalls, extractCssLinks, extractName, strip } from './parse.js';
 import { extractVars, stripVars } from './vars.js';
 import { rebuild } from './inject.js';
+import { buildErrorOverlay } from './error-overlay.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -95,15 +96,12 @@ const serve = (dir = '.', port = 3000) => {
                 res.writeHead(200, { 'Content-Type': 'text/html' });
                 return res.end(result);
             } catch (err) {
-                res.writeHead(500);
-                return res.end(err.message);
+                res.writeHead(500, { 'Content-Type': 'text/html' });
+                return res.end(buildErrorOverlay(err));
             }
         }
 
-        res.writeHead(200, {
-            'Content-Type': MIMES[ext] || 'text/plain'
-        });
-        
+        res.writeHead(200, { 'Content-Type': MIMES[ext] || 'text/plain' });
         fs.createReadStream(filePath).pipe(res);
     });
 
