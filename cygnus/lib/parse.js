@@ -1,41 +1,33 @@
 // @fileoverview parse using() calls, name() head config, and strip boilerplate from .html source
 
 /**
- * REGEX to match using() calls.
- * 
+ * Regex to match using() calls.
+ *
  * param2 can be:
  * - 'string' (quoted string)
  * - *varname (no quotes, variable reference)
  * - CSS (special keyword, no quotes)
- * 
- * param3 (file) is optional - used when param2 is *varname from another file
+ *
+ * param3 (file) is optional used when param2 is *varname from another file
  */
-const USING_RE = /using\(\s*(CSS|['"](?:.+?)['"])\s*,\s*(\*[A-Za-z_][A-Za-z0-9_]*|['"](?:.+?)['"])\s*(?:,\s*['"](.+?)['"]\s*)?\)/g;
-
-/**
- * REGEX to match name() calls for document metadata.
- */
+const USING_RE = /using\(\s*(CSS|['"](?:.+?)['"])\s*,\s*(\*[\p{L}_][\p{L}\p{M}\p{N}_]*|['"](?:.+?)['"])\s*(?:,\s*['"](.+?)['"]\s*)?\)/gu;
 const NAME_RE = /name\(\s*['"](.+?)['"]\s*(?:,\s*['"](.+?)['"]\s*)?\)/;
 
-/**
- * REGEXs for stripping HTML boilerplate.
- */
+// Regex for stripping HTML boilerplate.
 const DOCTYPE_RE = /<!DOCTYPE\s+html>\s*/i;
 const HTML_OPEN_RE = /<html([^>]*)>\s*/i;
 const HTML_CLOSE_RE = /\s*<\/html>/i;
 
 /**
  * Extract using() calls that appear before the <html> tag.
- *
  * @param {string} raw - Raw HTML source code
  * @returns {Array<Object>} Array of call objects
- *
  * @description
- * Returns objects in two possible formats:
- * - { sel, src }            - Load from normal file
- * - { sel, varName, file }  - Load from *name variable (file = null if same file)
  * 
- * Note: using(CSS, 'file.css') is NOT included in calls - extracted separately by extractCssLinks()
+ * Returns objects in two possible formats:
+ * - { sel, src }            Load from normal file
+ * - { sel, varName, file }  Load from *name variable (file = null if same file)
+ * Note: using(CSS, 'file.css') is NOT included in calls extracted separately by extractCssLinks()
  */
 const extractCalls = (raw) => {
     const beforeHtml = raw.split(/<html/i)[0];
@@ -47,7 +39,7 @@ const extractCalls = (raw) => {
     while ((match = USING_RE.exec(beforeHtml)) !== null) {
         const param1 = match[1].trim();
 
-        // using(CSS, ...) is not DOM injection - skip here
+        // using(CSS, ...) is not DOM injection skip here
         if (param1 === 'CSS') continue;
 
         const sel = param1.slice(1, -1); // strip quotes
@@ -61,7 +53,8 @@ const extractCalls = (raw) => {
                 file: file
             });
         } else {
-            const src = param2.slice(1, -1); // strip quotes
+            const src = param2.slice(1, -1);
+            
             calls.push({
                 sel: sel,
                 src: src
@@ -74,7 +67,6 @@ const extractCalls = (raw) => {
 
 /**
  * Extract using(CSS, 'file.css') calls that appear before the <html> tag.
- *
  * @param {string} raw - Raw HTML source code
  * @returns {string[]} Array of CSS file paths (e.g., ['dialog.css'])
  */
@@ -87,9 +79,11 @@ const extractCssLinks = (raw) => {
     
     while ((match = USING_RE.exec(beforeHtml)) !== null) {
         const param1 = match[1].trim();
+        
         if (param1 !== 'CSS') continue;
 
         const param2 = match[2].trim();
+        
         links.push(param2.slice(1, -1)); // strip quotes
     }
 
@@ -98,7 +92,6 @@ const extractCssLinks = (raw) => {
 
 /**
  * Extract name() call that appears before the <html> tag.
- *
  * @param {string} raw - Raw HTML source code
  * @returns {Object|null} Object with title and favicon, or null if not found
  * @returns {string} return.title - Document title

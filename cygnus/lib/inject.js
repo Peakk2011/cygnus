@@ -105,7 +105,7 @@ const injectCssLinks = (html, links) => {
         return html.replace('</head>', `${links}\n  </head>`);
     }
 
-    // No <head> at all — create empty <head> before <body>
+    // No <head> at all- create empty <head> before <body>
     return html.replace('<body', `  <head>\n${links}\n  </head>\n  <body`);
 };
 

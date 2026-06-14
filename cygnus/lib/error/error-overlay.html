@@ -26,36 +26,17 @@
                     </svg>
                     <p>CYGNUS</p>
                 </span>
-                <span class="header-label">build error</span>
+                <span class="header-label">__ERROR_COUNT__</span>
                 <span class="loc">line __LINE__ &nbsp; col __COL__</span>
             </div>
 
             <hr class="divider">
 
-            <div class="panels">
-
-                <div class="panel">
-                    <p class="panel-title">Error</p>
-                    <p class="error-msg" id="cy-msg"></p>
-                </div>
-
-                <div class="panel">
-                    <p class="panel-title">Source</p>
-                    <div class="frame">__FRAME__</div>
-                </div>
-
-                <div class="panel">
-                    <p class="panel-title">How to fix</p>
-                    <p class="fix-text">__FIX__</p>
-                    __FIX_CODE__
-                </div>
-
-            </div>
-
-            <hr class="divider">
+            __ERRORS_HTML__
 
             <div class="footer footer-help">
-                <span class="footer-label" id="footer-label-help">If you tried to figure the problem with yourself and you can't do it? call me:</span>
+                <span class="footer-label" id="footer-label-help">If you tried to figure the problem with yourself and
+                    you can't do it? call me:</span>
                 <a class="footer-call" href="tel:+6680380449">+66 0803804449</a>
             </div>
 
@@ -70,26 +51,30 @@
     </div>
 
     <script>
+        // Typing effect on first error message only
         const MSG = __MSG_JSON__;
-        const target = document.getElementById('cy-msg');
-        const cursor = document.createElement('span');
-        cursor.className = 'cursor';
-        target.appendChild(cursor);
+        const target = document.getElementById('cy-msg-0');
 
-        let i = 0;
-        const tick = () => {
-            if (i >= MSG.length) {
-                cursor.classList.add('done');
-                return;
-            }
-            const span = document.createElement('span');
-            span.textContent = MSG[i];
-            target.insertBefore(span, cursor);
-            i++;
-            setTimeout(tick, 22);
-        };
+        if (target) {
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            target.appendChild(cursor);
 
-        tick();
+            let i = 0;
+            const tick = () => {
+                if (i >= MSG.length) {
+                    cursor.classList.add('done');
+                    return;
+                }
+                const span = document.createElement('span');
+                span.textContent = MSG[i];
+                target.insertBefore(span, cursor);
+                i++;
+                setTimeout(tick, 22);
+            };
+
+            tick();
+        }
     </script>
 
 </body>

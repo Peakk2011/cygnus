@@ -15,7 +15,8 @@ const getHtmlSrc = readFileSync(
     'utf-8'
 );
 
-const HAS_DECL_RE = /\*[\p{L}_][\p{L}\p{N}_]*(\.create\(|\s*=\s*)/u;
+// Detect any *name.create() or *name = value declarations
+const HAS_DECL_RE = /\*[\p{L}_][\p{L}\p{M}\p{N}_]*(\.create\(|\s*=\s*)/u;
 
 const cygnusPlugin = () => ({
     name: 'vite-plugin-cygnus',
@@ -23,9 +24,9 @@ const cygnusPlugin = () => ({
     transformIndexHtml(html) {
         try {
             const hasVarDecl = HAS_DECL_RE.test(html);
-            const calls = extractCalls(html);
-            const cssLinks = extractCssLinks(html);
-            const name = extractName(html);
+            const calls      = extractCalls(html);
+            const cssLinks   = extractCssLinks(html);
+            const name       = extractName(html);
 
             if (!calls.length && !name && !hasVarDecl && !cssLinks.length) {
                 return html;

@@ -38,6 +38,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    scrollbar-width: thin;
 }
 
 /* Layout */
@@ -61,7 +62,7 @@ body {
 /* Receipt card (modal) */
 .receipt {
     width: 100%;
-    max-width: 900px;
+    max-width: 1000px;
     max-height: 90vh;
     overflow-y: auto;
     display: flex;
@@ -88,7 +89,7 @@ body {
     color: var(--color-brand-text);
     font-size: 0.75rem;
     font-weight: 700;
-    padding: 0.4rem 0.6rem;
+    padding: 0.5rem 0.6rem;
     white-space: nowrap;
     vertical-align: middle;
 
@@ -176,7 +177,7 @@ body {
     .panel:first-child {
         border-top: none;
     }
-    
+
     .error-msg,
     .frame {
         margin-bottom: 0rem !important;
@@ -363,4 +364,29 @@ body {
 
 #footer-label-help {
     color: var(--color-text-dim);
+}
+
+/* Multi-error additions */
+
+/* loc inline */
+.loc-inline {
+    color: var(--color-text-ghost);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* subsequent errors */
+.error-msg-plain {
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    word-break: break-word;
+    padding: 0rem 0.8rem;
+}
+
+/* separator between error blocks */
+.panels+.divider {
+    border-top-style: dashed;
+    opacity: 0.4;
 }
