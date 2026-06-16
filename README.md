@@ -10,7 +10,7 @@ Cygnus lets you split your UI into native `.html` component files with zero runt
 
 **1. Clone and install**
 ```bash
-git clone https://github.com/your-username/cygnus.git
+git clone https://github.com/Peakk2011/cygnus.git
 cd cygnus
 npm install
 ```
