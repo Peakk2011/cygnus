@@ -277,9 +277,10 @@ const interpolatePrimitives = (html, vars) => {
     let out = html;
 
     for (const [name, { value, type }] of vars) {
-        if (type === 'html') {
-            continue;
-        }
+        // Remove = We can use variables directly via .create() without needing to use `using` followed by the ID, which is complicated.
+        // if (type === 'html') {
+        //     continue;
+        // }
 
         const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         const REF_RE = new RegExp(`\\*${escaped}(?!\\.create|\\s*=)`, 'gu');

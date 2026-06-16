@@ -4,62 +4,55 @@
 
 > A lightweight HTML preprocessor for native `.html` component files.
 
-## What is Cygnus?
+Cygnus lets you split your UI into native `.html` component files with zero runtime overhead, no framework, and no virtual DOM.
 
-Cygnus lets you split your UI into native `.html` component files with zero runtime overhead, no framework, and no virtual DOM. Write `@using` at the top of your HTML. Cygnus handles the rest.
+## Get Started
 
-## Key Features
-
-- Native HTML components (no new file extension)
-- Zero runtime overhead
-- Seamless Vite integration
-- Built-in error overlay
-- Simple component system with variables
-
-## Installation
-
+**1. Clone and install**
 ```bash
-npm install -D cygnus
+git clone https://github.com/your-username/cygnus.git
+cd cygnus
+npm install
 ```
 
-## Usage
+**2. Create your first page**
 
+Create `src/index.html`:
 ```html
-@using "#nav" from "./components/nav.html"
-@using "#footer" from "./components/footer.html"
+@name('My App')
 
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My App</title>
-</head>
 <body>
-    <div id="nav"></div>
-    <div id="footer"></div>
+    <h1>Hello Cygnus</h1>
 </body>
 </html>
 ```
 
-## Syntax Reference
-
-### `@using` — inject component
-```html
-@using "#sel" from "./file.html"
+**3. Run**
+```bash
+npm run dev
 ```
 
-### `@name()` — auto-generate `<head>`
+That's it.
+
+## Syntax Reference
+
+### `@name()` : auto-generate `<head>`
 ```html
 @name('My App', './favicon.ico')
 ```
-Generates `<meta charset>`, viewport, `<title>`, and optionally `<link rel="icon">`. Skipped if `<head>` already exists.
 
-### `@using CSS` — inject stylesheet
+### `@using` : inject component
+```html
+@using "#nav" from "./components/nav.html"
+```
+
+### `@using CSS` : inject stylesheet
 ```html
 @using CSS "dialog.css"
 ```
-Injects `<link rel="stylesheet">` into `<head>`.
 
-### `*name.create()` — reusable variable
+### `*name.create()` : reusable variable
 ```html
 *badge.create(<span class="badge">New</span>)
 
@@ -77,28 +70,10 @@ Injects `<link rel="stylesheet">` into `<head>`.
 @using "#x" from *card in "card.html"
 ```
 
-### `toggle()` — runtime class toggle
+### `toggle()` : runtime class toggle
 ```html
 <button onclick="toggle('dialog')">Open</button>
 ```
-```js
-toggle('id')           // toggles class 'active' on #id
-toggle('id', 'open')   // toggles custom class
-```
-
-## Running
-
-### Standalone
-```bash
-cygnus ./src 3000
-```
-
-### With Vite
-See `vite.config.js` setup in the repository.
-
-```bash
-npm run dev
-```
 
 ## License
-MIT — [LICENSE.md](./LICENSE.md)
+MIT [LICENSE.md](./LICENSE.md)

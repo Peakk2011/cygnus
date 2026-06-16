@@ -244,7 +244,13 @@ const injectScript = (html, script) => {
  * @returns {string} Modified HTML with injected head
  */
 const injectHead = (html, head) => {
-    if (!head) return html;
+    if (!head) {
+        // There is no `@name()`, but a charset must always be present.
+        if (!html.includes('<head')) {
+            return html.replace('<body', `  <head>\n    <meta charset="UTF-8">\n  </head>\n  <body`);
+        }
+        return html;
+    }
     if (html.includes('<head')) return html;
 
     return html.replace('<body', `${head}\n  <body`);
