@@ -2,7 +2,7 @@
 
 ## Found a Security Problem?
 
-Don't post it publicly. Tell us privately with:
+Don't post it publicly. Tell me privately with:
 - What the problem is
 - How to see it
 - What could happen
@@ -20,7 +20,7 @@ Your code must:
 
 ## Error Messages
 
-Use our error-overlay system. Show helpful messages but don't show how the system works inside.
+Use my error-overlay system. Show helpful messages but don't show how the system works inside.
 
 ## Packages
 
