@@ -1,10 +1,11 @@
-<img src='./assets/logo.png' alt='Logo' width='380'><br>
+<p align="center">
+    <img src='./assets/logo.png' alt='Logo' width='380'>
+</p>
 
-# Cygnus
+<h3 align='center'>A lightweight HTML preprocessor<br>For native '.html' component files.</h3> 
+<br>
 
-> A lightweight HTML preprocessor for native `.html` component files.
-
-Cygnus lets you split your UI into native `.html` component files with zero runtime overhead, no framework, and no virtual DOM.
+<img src='./assets/cygnus.png' alt='Logo'><br>
 
 ## Get Started
 
