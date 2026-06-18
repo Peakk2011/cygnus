@@ -1,4 +1,4 @@
-<img src'../assets/full-logo.png' alt='Cygnus Logo' width='350'>
+![Logo](../assets/full-logo.png "Cygnus Logo")
 
 # เพราะอะไร
 
