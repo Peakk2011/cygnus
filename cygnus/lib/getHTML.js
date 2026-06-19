@@ -2,6 +2,77 @@
 
 const UNSAFE_TAGS = ['script', 'iframe', 'object', 'embed', 'base'];
 
+// Copy vars.js
+
+/**
+ * Mask HTML comments <!-- ... --> with spaces (preserving length and newlines).
+ * @param {string} raw
+ * @returns {string}
+ */
+const maskComments = (raw) => {
+    return raw.replace(/<!--[\s\S]*?-->/g, (match) =>
+        match.replace(/[^\n]/g, ' ')
+    );
+};
+
+/**
+ * Find all *name = value; primitive declarations (string + number).
+ * @param {string} masked - Comment-masked source string
+ * @returns {Array<{name: string, value: string|number, type: string}>}
+ */
+const findPrimitiveVars = (masked) => {
+    const STR_RE = /\*([\p{L}_][\p{L}\p{M}\p{N}_]*)\s*=\s*(['"])((?:(?!\2).)*)\2\s*;/gu;
+    const NUM_RE = /\*([\p{L}_][\p{L}\p{M}\p{N}_]*)\s*=\s*(-?[0-9]+(?:\.[0-9]+)?)\s*;/gu;
+    const results = [];
+    let match;
+
+    while ((match = STR_RE.exec(masked)) !== null) {
+        if (/\.create\(/.test(match[0])) continue;
+        results.push({ name: match[1], value: match[3], type: 'string' });
+    }
+
+    while ((match = NUM_RE.exec(masked)) !== null) {
+        results.push({ name: match[1], value: Number(match[2]), type: 'number' });
+    }
+
+    return results;
+};
+
+/**
+ * Replace *varName references in HTML with their primitive values.
+ * @param {string} html
+ * @param {Map<string, {value: any, type: string}>} vars
+ * @returns {string}
+ */
+const interpolatePrimitives = (html, vars) => {
+    let out = html;
+
+    for (const [name, { value }] of vars) {
+        const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const REF_RE = new RegExp(`\\*${escaped}(?!\\.create|\\s*=)`, 'gu');
+        out = out.replace(REF_RE, String(value));
+    }
+
+    return out;
+};
+
+/**
+ * Parse primitive vars from a raw file string into a Map.
+ * @param {string} raw
+ * @returns {Map<string, {value: any, type: string}>}
+ */
+const parsePrimitiveVars = (raw) => {
+    const masked = maskComments(raw);
+    const found  = findPrimitiveVars(masked);
+    const vars   = new Map();
+
+    for (const { name, value, type } of found) {
+        if (!vars.has(name)) vars.set(name, { value, type });
+    }
+
+    return vars;
+};
+
 /**
  * @param {string} html - Raw HTML string to sanitize
  * @returns {string} Sanitized HTML string
@@ -154,6 +225,9 @@ const using = async (sel, path, opts = {}) => {
 
         // If varName specified find *varName.create(...) in fetched file
         if (varName) {
+            // Parse primitive vars (*name = '...') from the source file
+            const fileVars = parsePrimitiveVars(html);
+
             const extracted = extractCreate(html, varName);
             
             if (extracted === null) {
@@ -163,8 +237,9 @@ const using = async (sel, path, opts = {}) => {
                     `using: *${varName}.create(...) not found in "${path}"\nContent preview: ${preview}...`
                 );
             }
-            
-            html = sanitize(extracted);
+
+            // Interpolate *primitiveVars inside the extracted block
+            html = sanitize(interpolatePrimitives(extracted, fileVars));
         }
 
         const doc = new DOMParser().parseFromString(

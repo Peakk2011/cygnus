@@ -145,11 +145,14 @@ const buildScriptBuild = (calls, vars, fileDir, needsToggle) => {
             return `  document.querySelector('${call.sel}').innerHTML = \`${escaped}\`;`;
         }
 
-        // Case 3: Variable from another file → read and extract at compile time
+        // Case 3: Variable from another file
         const absPath = path.resolve(fileDir, call.file);
         const raw = fs.readFileSync(absPath, 'utf-8');
-        const html = extractVarFromFile(raw, call.varName, call.file);
-        const escaped = html
+        const { vars: compVars, ranges } = extractVars(raw);
+        const cleaned = stripVars(raw, ranges);
+        const html = extractVarFromFile(cleaned, call.varName, call.file);
+        const finalHtml = interpolatePrimitives(html, compVars);
+        const escaped = finalHtml
             .replace(/\\/g, '\\\\')
             .replace(/`/g, '\\`')
             .replace(/\$\{/g, '\\${');
