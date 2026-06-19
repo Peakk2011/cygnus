@@ -127,6 +127,53 @@ const cygnusPlugin = () => {
         name: 'vite-plugin-cygnus',
 
         /**
+         * Load to serve .html files as raw text in dev mode.
+         * *varName.create(...) patterns for browser-side extract
+         */
+        load(id) {
+            // Only intercept .html file loads in the src directory
+            if (!id.endsWith('.html')) return null;
+            if (!id.includes(path.resolve(__dirname, 'src'))) return null;
+
+            try {
+                const raw = readFileSync(id, 'utf-8');
+                // Return as plain text module so browser can fetch it
+                return raw;
+            } catch (err) {
+                return null;
+            }
+        },
+
+        /**
+         * Make dev server to serve non-index .html files as raw text.
+         * *varName.create(...) patterns for browser-side extractCreate().
+         */
+        configureServer(server) {
+            return () => {
+                server.middlewares.use((req, res, next) => {
+                    // Match xxx.html, etc. but not /index.html or root '/'
+                    const isHtmlFile = req.url.endsWith('.html') && 
+                                      req.url !== '/' && 
+                                      req.url !== '/index.html' && 
+                                      !req.url.startsWith('/@');
+
+                    if (!isHtmlFile) return next();
+
+                    const srcRoot = path.resolve(__dirname, 'src');
+                    const filePath = path.join(srcRoot, req.url);
+
+                    try {
+                        const raw = readFileSync(filePath, 'utf-8');
+                        res.setHeader('Content-Type', 'text/html;charset=UTF-8');
+                        res.end(raw);
+                    } catch (err) {
+                        next();
+                    }
+                });
+            };
+        },
+
+        /**
          * Transform the Vite entry point index.html through the Cygnus pipeline.
          * Also collects CSS paths and folder names during a production build.
          */

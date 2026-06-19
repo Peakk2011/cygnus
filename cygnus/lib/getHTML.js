@@ -74,8 +74,15 @@ const insert = (target, frag, mode = 'replace') => {
  * @returns {string|null} Extracted HTML content or null if not found
  */
 const extractCreate = (raw, varName) => {
-    const re = new RegExp(`\\*${varName}\\.create\\(`);
-    const match = raw.match(re);
+    // Try multiple regex patterns to handle different cases
+    let re = new RegExp(`\\*${varName}\\.create\\(`);
+    let match = raw.match(re);
+    
+    // In there are spaces before create
+    if (!match) {
+        re = new RegExp(`\\*${varName}\\s*\\.\\s*create\\s*\\(`);
+        match = raw.match(re);
+    }
     
     if (!match) return null;
 
@@ -83,6 +90,7 @@ const extractCreate = (raw, varName) => {
     let depth = 0;
     let i = openIdx;
 
+    // Find the matching closing parenthesis
     for (; i < raw.length; i++) {
         if (raw[i] === '(') depth++;
         if (raw[i] === ')') {
@@ -91,7 +99,9 @@ const extractCreate = (raw, varName) => {
         }
     }
 
-    if (depth !== 0) return null;
+    if (depth !== 0 || i >= raw.length) {
+        return null;
+    }
 
     return raw.slice(openIdx + 1, i).trim();
 };
@@ -147,8 +157,10 @@ const using = async (sel, path, opts = {}) => {
             const extracted = extractCreate(html, varName);
             
             if (extracted === null) {
+                // Provide detailed error message with preview of content
+                const preview = html.slice(0, 200).replace(/\n/g, ' ');
                 throw new Error(
-                    `using: *${varName}.create(...) not found in "${path}"`
+                    `using: *${varName}.create(...) not found in "${path}"\nContent preview: ${preview}...`
                 );
             }
             
