@@ -7,18 +7,56 @@
 
 <img src='./assets/cygnus.png' alt='Logo'><br>
 
-## Get Started
+## What is Cygnus?
 
-**1. Clone and install**
+Cygnus is an **HTML preprocessor** (not a framework & not a PHP) that adds component reuse, CSS injection, and variable templating to native `.html` files. It runs as a Vite plugin via `@peakk/cygnus`.
+
+**Cygnus is a library.** You import its helpers in your own `vite.config.js` there's no scaffolding CLI.
+
+## Installation
+
 ```bash
-git clone https://github.com/Peakk2011/cygnus.git
-cd cygnus
-npm install
+npm install @peakk/cygnus
+npm install -D vite
 ```
 
-**2. Create your first page**
+> **Note:** Vite is a peer dependency. Cygnus will print a warning at startup if Vite is not installed.
 
-Create `src/index.html`:
+## Get Started
+
+**1. Create your project's `vite.config.js`** (see `templates/vite.config.js`):
+
+```js
+import { defineConfig } from 'vite';
+import { cygnusPlugin } from '@peakk/cygnus';
+
+export default defineConfig({
+    root: 'src',
+    build: {
+        outDir: '../dist',
+        emptyOutDir: true
+    },
+    server: {
+        fs: { strict: false }
+    },
+    plugins: [cygnusPlugin()]
+});
+```
+
+**2. Add scripts to your `package.json`:**
+
+```json
+{
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  }
+}
+```
+
+**3. Create `src/index.html`:**
+
 ```html
 @name('My App')
 
@@ -29,12 +67,13 @@ Create `src/index.html`:
 </html>
 ```
 
-**3. Run**
+**4. Run:**
+
 ```bash
 npm run dev
 ```
 
-That's it.
+That's it. A complete starter (vite.config.js, src/index.html, README) lives in the `templates/` folder of the package copy it into your project and edit.
 
 ## Syntax Reference
 
@@ -75,6 +114,25 @@ That's it.
 ```html
 <button onclick="toggle('dialog')">Open</button>
 ```
+
+## API
+
+The package exports two layers of helpers from `@peakk/cygnus`:
+
+**Vite plugin (high-level):**
+- `cygnusPlugin(opts)` Vite plugin factory; the main thing you import
+- `processCygnusHtml(html, opts)` run a single HTML string through the pipeline
+- `copyDirWithHtml(src, dest, isBuild)` recursively copy a folder, processing `.html` files
+- `safeResolve(base, request, root)` path-traversal-safe resolver
+- `HAS_DECL_RE` regex detecting any Cygnus directive in HTML
+
+**Core pipeline (low-level):**
+- `extractCalls`, `extractCssLinks`, `extractName`, `strip` (from `parse.js`)
+- `extractVars`, `stripVars`, `interpolatePrimitives` (from `vars.js`)
+- `rebuild` (from `inject.js`)
+- `buildErrorOverlay` (from `error-overlay.js`)
+
+If you want to embed Cygnus in a non-Vite pipeline, use the low-level helpers directly.
 
 ## License
 MIT [LICENSE.md](./LICENSE.md)

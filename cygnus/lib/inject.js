@@ -2,7 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import { interpolatePrimitives, extractVars, stripVars } from './vars.js';
+import { interpolatePrimitives, extractVars, stripVars } from 'cygnus/lib/vars.js';
 
 /**
  * Minimal toggle() function injected at build time.

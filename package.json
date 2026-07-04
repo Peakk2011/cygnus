@@ -1,19 +1,41 @@
 {
-  "name": "cygnus",
-  "version": "1.0.0",
-  "description": "A tool that can make a native '.html' module components.",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "keywords": ["html", "preprocessor", "components", "vite-plugin"],
-  "author": "",
-  "license": "MIT",
-  "type": "module",
-  "devDependencies": {
-    "cygnus": "file:cygnus",
-    "vite": "^6.3.5"
-  }
+    "name": "@peakk/cygnus",
+    "version": "1.0.0",
+    "description": "A lightweight HTML preprocessor for native '.html' component files.",
+    "type": "module",
+    "main": "./cygnus/index.js",
+    "module": "./cygnus/index.js",
+    "exports": {
+        ".": "./cygnus/index.js",
+        "./lib/*": "./cygnus/lib/*",
+        "./templates/*": "./templates/*",
+        "./package.json": "./package.json"
+    },
+    "files": [
+        "cygnus/",
+        "templates/",
+        "README.md",
+        "LICENSE.md"
+    ],
+    "keywords": [
+        "html",
+        "preprocessor",
+        "components",
+        "vite",
+        "cygnus html"
+    ],
+    "author": "Peakk",
+    "license": "MIT",
+    "peerDependencies": {
+        "vite": "^6.0.0"
+    },
+    "engines": {
+        "node": ">=18"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/peakk2011/cygnus.git"
+    },
+    "bugs": "https://github.com/peakk2011/cygnus/issues",
+    "homepage": "https://github.com/peakk2011/cygnus#readme"
 }
